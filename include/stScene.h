@@ -1,8 +1,8 @@
-#include "global.h"
+#include <vector>
 #include "material.h"
 #include "proceduralTextures.h"
 #include "config_loader.h"
-#include <vector>
+
 
 class stScene
 {

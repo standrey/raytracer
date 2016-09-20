@@ -1,13 +1,11 @@
 #ifndef CONFIG_LOADER_H
 #define CONFIG_LOADER_H
 
-#include "global.h"
-#include "material.h"
-
 #include <string>
 #include <fstream>
 #include <list>
-#include <vector>
+#include <vector>
+#include "material.h"
 
 using namespace std;
 

@@ -1,7 +1,6 @@
 #ifndef PROCEDURAL_TEXTURES_H
 #define PROCEDURAL_TEXTURES_H
 
-#include "global.h"
 #include "perlin.h"
 
 class ProceduralTextures

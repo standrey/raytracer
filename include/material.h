@@ -1,8 +1,6 @@
 #ifndef _MATERIAL_H
 #define _MATERIAL_H
 
-#include "global.h"
-
 typedef struct {
 	D3DXVECTOR3 position;
 	float intensity;

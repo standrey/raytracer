@@ -1,11 +1,7 @@
-#include <windows.h>
-#include <mmsystem.h>
-
 #define _USE_MATH_DEFINES
 #include <math.h>
 
 #include "stScene.h"
-#pragma comment(lib,"WINMM.LIB")
 
 float InvSqrt (float x){
     float xhalf = 0.5f*x;
