@@ -1,4 +1,5 @@
 #include "proceduralTextures.h"
+#include <math.h>
 
 Perlin ProceduralTextures::PerlinNoise = Perlin();
 
@@ -12,19 +13,19 @@ ProceduralTextures::~ProceduralTextures()
 	float ttt = 0;
 }
 
-D3DXCOLOR ProceduralTextures::Marble(const D3DXVECTOR3 & point)
+glm::vec3 ProceduralTextures::Marble(const glm::vec3 & point)
 {
-	return D3DXCOLOR();
+	return glm::vec3();
 }
 
-D3DXCOLOR ProceduralTextures::Turbulence(	const float & lambertCoeff, 
+glm::vec3 ProceduralTextures::Turbulence(	const float & lambertCoeff, 
 												const float & reflectCoeff, 
-												const D3DXVECTOR3 & point,
-												const D3DXCOLOR & color1,
-												const D3DXCOLOR & color2,
+												const glm::vec3 & point,
+												const glm::vec3 & color1,
+												const glm::vec3 & color2,
 												const float & lightIntensity)
 {
-	D3DCOLORVALUE resColorToAdd;
+	glm::vec3 resColorToAdd;
 	float noiseCoef = 0;
 
 	for (int levelTurb = 1; levelTurb < 10; levelTurb ++)
@@ -39,11 +40,11 @@ D3DXCOLOR ProceduralTextures::Turbulence(	const float & lambertCoeff,
 	return resColorToAdd;
 }
 
-D3DXVECTOR3	ProceduralTextures::SimpePerlin	(	const float & bump, 
-												const D3DXVECTOR3 & point, 
-												const D3DXVECTOR3 & curNormal)
+glm::vec3	ProceduralTextures::SimpePerlin	(	const float & bump, 
+												const glm::vec3 & point, 
+												const glm::vec3 & curNormal)
 {
-	D3DXVECTOR3 resNormal;
+	glm::vec3 resNormal;
 	float noiseCoefx = float(PerlinNoise.noise(0.2 * double(point.x), 0.2 * double(point.y), 0.2 * double(point.z)));
 	float noiseCoefy = float(PerlinNoise.noise(0.2 * double(point.y), 0.2 * double(point.z), 0.2 * double(point.x)));
 	float noiseCoefz = float(PerlinNoise.noise(0.2 * double(point.z), 0.2 * double(point.x), 0.2 * double(point.y)));

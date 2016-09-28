@@ -154,15 +154,15 @@ void stScene::DrawObjects()
 void stScene::calcFPS(DWORD oldTime)
 {
       FrameCnt++;
-      DWORD newTime = timeGetTime(); // записываем в ньютайм время после всех выполненных операциях
-      DWORD deltatime = newTime - oldTime; // узнаем сколько времени проходит от начала до конца
-      TimeElapsed += deltatime; // и прибавляем эту разницу к таймэлапседу
+      DWORD newTime = timeGetTime(); // Г§Г ГЇГЁГ±Г»ГўГ ГҐГ¬ Гў Г­ГјГѕГІГ Г©Г¬ ГўГ°ГҐГ¬Гї ГЇГ®Г±Г«ГҐ ГўГ±ГҐГµ ГўГ»ГЇГ®Г«Г­ГҐГ­Г­Г»Гµ Г®ГЇГҐГ°Г Г¶ГЁГїГµ
+      DWORD deltatime = newTime - oldTime; // ГіГ§Г­Г ГҐГ¬ Г±ГЄГ®Г«ГјГЄГ® ГўГ°ГҐГ¬ГҐГ­ГЁ ГЇГ°Г®ГµГ®Г¤ГЁГІ Г®ГІ Г­Г Г·Г Г«Г  Г¤Г® ГЄГ®Г­Г¶Г 
+      TimeElapsed += deltatime; // ГЁ ГЇГ°ГЁГЎГ ГўГ«ГїГҐГ¬ ГЅГІГі Г°Г Г§Г­ГЁГ¶Гі ГЄ ГІГ Г©Г¬ГЅГ«Г ГЇГ±ГҐГ¤Гі
  
-      if(TimeElapsed >= 1000) // если в таймэлапседе накопилось 0.5 сек, то
+      if(TimeElapsed >= 1000) // ГҐГ±Г«ГЁ Гў ГІГ Г©Г¬ГЅГ«Г ГЇГ±ГҐГ¤ГҐ Г­Г ГЄГ®ГЇГЁГ«Г®Г±Гј 0.5 Г±ГҐГЄ, ГІГ®
       {
-        FPS = (1000.0f * FrameCnt) / TimeElapsed; // делим кол-во кадров прошедшее за полсекунды на таймэлапсед(равный примерно 0.5 сек)
-        TimeElapsed = 0; // обнуляем таймэлапсед, для следующего подсчета
-        FrameCnt = 0; // и обнуляем кол-во кадров
+        FPS = (1000.0f * FrameCnt) / TimeElapsed; // Г¤ГҐГ«ГЁГ¬ ГЄГ®Г«-ГўГ® ГЄГ Г¤Г°Г®Гў ГЇГ°Г®ГёГҐГ¤ГёГҐГҐ Г§Г  ГЇГ®Г«Г±ГҐГЄГіГ­Г¤Г» Г­Г  ГІГ Г©Г¬ГЅГ«Г ГЇГ±ГҐГ¤(Г°Г ГўГ­Г»Г© ГЇГ°ГЁГ¬ГҐГ°Г­Г® 0.5 Г±ГҐГЄ)
+        TimeElapsed = 0; // Г®ГЎГ­ГіГ«ГїГҐГ¬ ГІГ Г©Г¬ГЅГ«Г ГЇГ±ГҐГ¤, Г¤Г«Гї Г±Г«ГҐГ¤ГіГѕГ№ГҐГЈГ® ГЇГ®Г¤Г±Г·ГҐГІГ 
+        FrameCnt = 0; // ГЁ Г®ГЎГ­ГіГ«ГїГҐГ¬ ГЄГ®Г«-ГўГ® ГЄГ Г¤Г°Г®Гў
       }
 }
 
@@ -180,11 +180,11 @@ void stScene::drawFPS()
     font->DrawText( NULL, textbuffer, -1, &FontPosition, DT_LEFT, 0xFFFFFF80 );
 }
 
-D3DCOLORVALUE stScene::readTexture(int iTileTex, float uCoord, float vCoord, const D3DLOCKED_RECT & rect)
+glm::vec3 stScene::readTexture(int iTileTex, float uCoord, float vCoord, const D3DLOCKED_RECT & rect)
 {
 	float sizeU = (float)objConfig->m_cubemap->w;
 	float sizeV = (float)objConfig->m_cubemap->h;
-	D3DXCOLOR outputColor;
+	glm::vec3 outputColor;
 	memset(&outputColor, 0, sizeof(outputColor));
     float u = fabsf(uCoord);
     float v = fabsf(vCoord);
@@ -201,11 +201,11 @@ D3DCOLORVALUE stScene::readTexture(int iTileTex, float uCoord, float vCoord, con
 	//texture FVF FORMAT is DWORD X8R8G8B8
 	//real texture size after load into DIRECTX (1024x128 (H*W) instead of 600x100)
 	DWORD * dwColor = (DWORD *)rect.pBits + rect.Pitch/4*objConfig->m_cubemap->h*iTileTex;
-	//чтобы произвести математические операции с цветом делаем из DWORD "правильную" структуру
-	D3DXCOLOR colorP0(dwColor[umin + (rect.Pitch/4) * vmin]);
-	D3DXCOLOR colorP1(dwColor[umax + (rect.Pitch/4) * vmin]);
-	D3DXCOLOR colorP2(dwColor[umin + (rect.Pitch/4) * vmax]);
-	D3DXCOLOR colorP3(dwColor[umax + (rect.Pitch/4) * vmax]);
+	//Г·ГІГ®ГЎГ» ГЇГ°Г®ГЁГ§ГўГҐГ±ГІГЁ Г¬Г ГІГҐГ¬Г ГІГЁГ·ГҐГ±ГЄГЁГҐ Г®ГЇГҐГ°Г Г¶ГЁГЁ Г± Г¶ГўГҐГІГ®Г¬ Г¤ГҐГ«Г ГҐГ¬ ГЁГ§ DWORD "ГЇГ°Г ГўГЁГ«ГјГ­ГіГѕ" Г±ГІГ°ГіГЄГІГіГ°Гі
+	glm::vec3 colorP0(dwColor[umin + (rect.Pitch/4) * vmin]);
+	glm::vec3 colorP1(dwColor[umax + (rect.Pitch/4) * vmin]);
+	glm::vec3 colorP2(dwColor[umin + (rect.Pitch/4) * vmax]);
+	glm::vec3 colorP3(dwColor[umax + (rect.Pitch/4) * vmax]);
 	/*
 	D3DCOLOR P0 = ((DWORD *)rect.pBits)[umin + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
 	D3DCOLOR P1 = ((DWORD *)rect.pBits)[umax + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
@@ -217,9 +217,9 @@ D3DCOLORVALUE stScene::readTexture(int iTileTex, float uCoord, float vCoord, con
 	return outputColor;
 }
 
-D3DCOLORVALUE stScene::readCubemap(stRay viewRay)
+glm::vec3 stScene::readCubemap(stRay viewRay)
 {
-	D3DXCOLOR outputColor(0, 0, 0, 0);
+	glm::vec3 outputColor(0, 0, 0, 0);
 
 	D3DLOCKED_RECT rect;
     ZeroMemory(&rect, sizeof(D3DLOCKED_RECT));
@@ -317,7 +317,7 @@ D3DCOLORVALUE stScene::readCubemap(stRay viewRay)
 
 float stScene::AutoExposure() {
 	OutputDebugString(L"Start autoexposure calculating\n");
-	//выдержка
+	//ГўГ»Г¤ГҐГ°Г¦ГЄГ 
 	#define ACCUMULATION_SIZE 16
 	float exposure = -1.0f;
 	float accumulationFactor = float(max(stSceneSizeX, stSceneSizeY));
@@ -325,11 +325,11 @@ float stScene::AutoExposure() {
 	float mediumPoint = 0;
 	const float mediumPointWeight = 1.0f/(ACCUMULATION_SIZE*ACCUMULATION_SIZE);
 	
-	//проходимся по квадратной поверхности и генерируем лучи с учётом выдержки
+	//ГЇГ°Г®ГµГ®Г¤ГЁГ¬Г±Гї ГЇГ® ГЄГўГ Г¤Г°Г ГІГ­Г®Г© ГЇГ®ГўГҐГ°ГµГ­Г®Г±ГІГЁ ГЁ ГЈГҐГ­ГҐГ°ГЁГ°ГіГҐГ¬ Г«ГіГ·ГЁ Г± ГіГ·ВёГІГ®Г¬ ГўГ»Г¤ГҐГ°Г¦ГЄГЁ
 	for (int y = 0; y < ACCUMULATION_SIZE; ++y)
 	for (int x = 0; x < ACCUMULATION_SIZE; ++x) {
-		stRay viewRay = stRay(D3DXVECTOR3(float(x) * accumulationFactor, float(y) * accumulationFactor, -1000.0f), D3DXVECTOR3(0.0f, 0.0f ,1.0f));
-		D3DXCOLOR currentColor = addRay(viewRay);
+		stRay viewRay = stRay(glm::vec3(float(x) * accumulationFactor, float(y) * accumulationFactor, -1000.0f), glm::vec3(0.0f, 0.0f ,1.0f));
+		glm::vec3 currentColor = addRay(viewRay);
 		float luminance = 0.2126f * currentColor.r + 0.715160f * currentColor.g + 0.072169f * currentColor.b;
 		mediumPoint += mediumPointWeight * (luminance * luminance);
 	}
@@ -342,26 +342,26 @@ float stScene::AutoExposure() {
 	return exposure;
 }
 
-D3DXCOLOR stScene::addRay(stRay viewRay) {
+glm::vec3 stScene::addRay(stRay viewRay) {
 	
-	D3DXCOLOR ambientColor(.2f, .2f, .2f, 1.0); //рассеяный свет
-	D3DXCOLOR resPixelColor(0.0f, 0.0f, 0.0f, 0.0f);
-	const int maxLevelReflection = 2;//уровень вложенност отражения луча
-	int level = maxLevelReflection;//текущий уровень вложенности луча
+	glm::vec3 ambientColor(.2f, .2f, .2f, 1.0); //Г°Г Г±Г±ГҐГїГ­Г»Г© Г±ГўГҐГІ
+	glm::vec3 resPixelColor(0.0f, 0.0f, 0.0f, 0.0f);
+	const int maxLevelReflection = 2;//ГіГ°Г®ГўГҐГ­Гј ГўГ«Г®Г¦ГҐГ­Г­Г®Г±ГІ Г®ГІГ°Г Г¦ГҐГ­ГЁГї Г«ГіГ·Г 
+	int level = maxLevelReflection;//ГІГҐГЄГіГ№ГЁГ© ГіГ°Г®ГўГҐГ­Гј ГўГ«Г®Г¦ГҐГ­Г­Г®Г±ГІГЁ Г«ГіГ·Г 
 
-	float coefReflect = 1.0f;//начальный коэффициет отражения
+	float coefReflect = 1.0f;//Г­Г Г·Г Г«ГјГ­Г»Г© ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГІ Г®ГІГ°Г Г¦ГҐГ­ГЁГї
 	
-	//начинаем отражать луч наблюдения от всех объектов и собирать его цвета
+	//Г­Г Г·ГЁГ­Г ГҐГ¬ Г®ГІГ°Г Г¦Г ГІГј Г«ГіГ· Г­Г ГЎГ«ГѕГ¤ГҐГ­ГЁГї Г®ГІ ГўГ±ГҐГµ Г®ГЎГєГҐГЄГІГ®Гў ГЁ Г±Г®ГЎГЁГ°Г ГІГј ГҐГЈГ® Г¶ГўГҐГІГ 
 	do
 	{
 		stSphere * curSphere = 0;
-		float distance = 2000.0f; // ограничение для видимости сцены 
-		// ищем пересечение луча со сферой
+		float distance = 2000.0f; // Г®ГЈГ°Г Г­ГЁГ·ГҐГ­ГЁГҐ Г¤Г«Гї ГўГЁГ¤ГЁГ¬Г®Г±ГІГЁ Г±Г¶ГҐГ­Г» 
+		// ГЁГ№ГҐГ¬ ГЇГҐГ°ГҐГ±ГҐГ·ГҐГ­ГЁГҐ Г«ГіГ·Г  Г±Г® Г±ГґГҐГ°Г®Г©
 		for (std::vector<stSphere>::iterator i = listSpheres.begin(); i < listSpheres.end(); i++) { 
 			float fDistance = 0;
 			if ((*i).RayCollision(viewRay, fDistance) == false)
 				continue;
-			// пересекаются, запоминаем сферу 
+			// ГЇГҐГ°ГҐГ±ГҐГЄГ ГѕГІГ±Гї, Г§Г ГЇГ®Г¬ГЁГ­Г ГҐГ¬ Г±ГґГҐГ°Гі 
 			if (distance > fDistance) { 	
 				curSphere = &(*i);
 				distance = fDistance;
@@ -369,47 +369,47 @@ D3DXCOLOR stScene::addRay(stRay viewRay) {
 		}
 		//if (viewRay.startPoint.x == 200 && viewRay.startPoint.y == 1) ambientColor.a = 1.0f;
 
-		//если не найдено ни одного пересечения, то получаем цвет текстуры из куба окружения или фоновый цвет и добавляем его
+		//ГҐГ±Г«ГЁ Г­ГҐ Г­Г Г©Г¤ГҐГ­Г® Г­ГЁ Г®Г¤Г­Г®ГЈГ® ГЇГҐГ°ГҐГ±ГҐГ·ГҐГ­ГЁГї, ГІГ® ГЇГ®Г«ГіГ·Г ГҐГ¬ Г¶ГўГҐГІ ГІГҐГЄГ±ГІГіГ°Г» ГЁГ§ ГЄГіГЎГ  Г®ГЄГ°ГіГ¦ГҐГ­ГЁГї ГЁГ«ГЁ ГґГ®Г­Г®ГўГ»Г© Г¶ГўГҐГІ ГЁ Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГҐГЈГ®
 		if (curSphere == 0) {
 			if (level == maxLevelReflection)
 				resPixelColor = ambientColor;
 			else 
 				resPixelColor += readCubemap(viewRay);
-			//выходим из цикла, т к луч уже не будет отражаться
+			//ГўГ»ГµГ®Г¤ГЁГ¬ ГЁГ§ Г¶ГЁГЄГ«Г , ГІ ГЄ Г«ГіГ· ГіГ¦ГҐ Г­ГҐ ГЎГіГ¤ГҐГІ Г®ГІГ°Г Г¦Г ГІГјГ±Гї
 			break;
 		}
 			
-		D3DXVECTOR3 intPoint = viewRay.startPoint + distance * viewRay.direction; //точка пересечения в мировых координатах
-		D3DXVECTOR3 normal = intPoint - curSphere->position; //нормаль к точке пересечения
+		glm::vec3 intPoint = viewRay.startPoint + distance * viewRay.direction; //ГІГ®Г·ГЄГ  ГЇГҐГ°ГҐГ±ГҐГ·ГҐГ­ГЁГї Гў Г¬ГЁГ°Г®ГўГ»Гµ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ Гµ
+		glm::vec3 normal = intPoint - curSphere->position; //Г­Г®Г°Г¬Г Г«Гј ГЄ ГІГ®Г·ГЄГҐ ГЇГҐГ°ГҐГ±ГҐГ·ГҐГ­ГЁГї
 
-		D3DXVec3Normalize(&viewRay.direction, &viewRay.direction); //нормализуем вектор луча
-		D3DXVec3Normalize(&normal, &normal);//нормализуем нормаль
+		D3DXVec3Normalize(&viewRay.direction, &viewRay.direction); //Г­Г®Г°Г¬Г Г«ГЁГ§ГіГҐГ¬ ГўГҐГЄГІГ®Г° Г«ГіГ·Г 
+		D3DXVec3Normalize(&normal, &normal);//Г­Г®Г°Г¬Г Г«ГЁГ§ГіГҐГ¬ Г­Г®Г°Г¬Г Г«Гј
 		stMaterial & curMaterial = listMaterials.at(curSphere->MaterialId);
 
-		//изменяем нормаль в если это бумп поверхность
+		//ГЁГ§Г¬ГҐГ­ГїГҐГ¬ Г­Г®Г°Г¬Г Г«Гј Гў ГҐГ±Г«ГЁ ГЅГІГ® ГЎГіГ¬ГЇ ГЇГ®ГўГҐГ°ГµГ­Г®Г±ГІГј
 		if (curMaterial.bump != 0)
 			normal = texture.SimpePerlin(curMaterial.bump, intPoint, normal);
 
-		//добавляем цвет окружения к текущему пересечению сферы и луча
+		//Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ Г¶ГўГҐГІ Г®ГЄГ°ГіГ¦ГҐГ­ГЁГї ГЄ ГІГҐГЄГіГ№ГҐГ¬Гі ГЇГҐГ°ГҐГ±ГҐГ·ГҐГ­ГЁГѕ Г±ГґГҐГ°Г» ГЁ Г«ГіГ·Г 
 		resPixelColor.r += curMaterial.color.r * ambientColor.r;
 		resPixelColor.g += curMaterial.color.g * ambientColor.g;
 		resPixelColor.b += curMaterial.color.b * ambientColor.b;
 
-		viewRay.direction = -viewRay.direction; //получаем направление в обратную сторону, т е от сферы к наблюдателю
+		viewRay.direction = -viewRay.direction; //ГЇГ®Г«ГіГ·Г ГҐГ¬ Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГҐ Гў Г®ГЎГ°Г ГІГ­ГіГѕ Г±ГІГ®Г°Г®Г­Гі, ГІ ГҐ Г®ГІ Г±ГґГҐГ°Г» ГЄ Г­Г ГЎГ«ГѕГ¤Г ГІГҐГ«Гѕ
 
-		float dotViewNormal = D3DXVec3Dot(&viewRay.direction, &normal); //вычисляем стоит ли считать это пересечение
+		float dotViewNormal = glm::dot(viewRay.direction, normal); //ГўГ»Г·ГЁГ±Г«ГїГҐГ¬ Г±ГІГ®ГЁГІ Г«ГЁ Г±Г·ГЁГІГ ГІГј ГЅГІГ® ГЇГҐГ°ГҐГ±ГҐГ·ГҐГ­ГЁГҐ
 		if (dotViewNormal <= 0)
 			break;
 
-		//проходимся по всем источникам освещения в сцене
+		//ГЇГ°Г®ГµГ®Г¤ГЁГ¬Г±Гї ГЇГ® ГўГ±ГҐГ¬ ГЁГ±ГІГ®Г·Г­ГЁГЄГ Г¬ Г®Г±ГўГҐГ№ГҐГ­ГЁГї Гў Г±Г¶ГҐГ­ГҐ
 		for (std::vector<stLight>::iterator pPointLight = listPointLights.begin(); pPointLight < listPointLights.end(); pPointLight++) {
-			D3DXVECTOR3 lightPos = (*pPointLight).position;
-			D3DXVECTOR3 lightDirection = lightPos - intPoint; //вычисляем направление света в точке пересечения
+			glm::vec3 lightPos = (*pPointLight).position;
+			glm::vec3 lightDirection = lightPos - intPoint; //ГўГ»Г·ГЁГ±Г«ГїГҐГ¬ Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГҐ Г±ГўГҐГІГ  Гў ГІГ®Г·ГЄГҐ ГЇГҐГ°ГҐГ±ГҐГ·ГҐГ­ГЁГї
 			D3DXVec3Normalize(&lightDirection, &lightDirection);
 			
 			stSphere * curLightSphere = 0;
 			float distance = 2000.0f;
-			//вычисляем пересекает ли луч света одну из точку на этой сфере
+			//ГўГ»Г·ГЁГ±Г«ГїГҐГ¬ ГЇГҐГ°ГҐГ±ГҐГЄГ ГҐГІ Г«ГЁ Г«ГіГ· Г±ГўГҐГІГ  Г®Г¤Г­Гі ГЁГ§ ГІГ®Г·ГЄГі Г­Г  ГЅГІГ®Г© Г±ГґГҐГ°ГҐ
 			for (std::vector<stSphere>::iterator i = listSpheres.begin(); i < listSpheres.end(); i++) {
 				float fDistance = 0;
 				stRay lightRay = stRay((*pPointLight).position, -lightDirection);
@@ -421,12 +421,12 @@ D3DXCOLOR stScene::addRay(stRay viewRay) {
 				}
 			}
 			
-			//если свет не светит на эту точку сферы
+			//ГҐГ±Г«ГЁ Г±ГўГҐГІ Г­ГҐ Г±ГўГҐГІГЁГІ Г­Г  ГЅГІГі ГІГ®Г·ГЄГі Г±ГґГҐГ°Г»
 			if (curLightSphere != curSphere)
 				continue;
 				
-			float dotLightNormal = D3DXVec3Dot(&lightDirection, &normal);
-			if (dotLightNormal <= 0) //если не светит под острым углом 
+			float dotLightNormal = glm::dot(lightDirection, normal);
+			if (dotLightNormal <= 0) //ГҐГ±Г«ГЁ Г­ГҐ Г±ГўГҐГІГЁГІ ГЇГ®Г¤ Г®Г±ГІГ°Г»Г¬ ГіГЈГ«Г®Г¬ 
 				continue;
 			
 			//diffuse
@@ -441,15 +441,15 @@ D3DXCOLOR stScene::addRay(stRay viewRay) {
 
 			//specular by Phong
 			float phongTerm = 0;
-			D3DXVECTOR3 reflectDir = 2 * normal * dotLightNormal - lightDirection;
-			phongTerm = max(D3DXVec3Dot(&viewRay.direction, &reflectDir), 0.0f);
+			glm::vec3 reflectDir = 2 * normal * dotLightNormal - lightDirection;
+			phongTerm = max(glm::dot(viewRay.direction, reflectDir), 0.0f);
 			phongTerm = curMaterial.specVal * powf(phongTerm, curMaterial.specPow) * coefReflect * (*pPointLight).intensity;
 			resPixelColor.r += phongTerm;
 			resPixelColor.g += phongTerm;
 			resPixelColor.b += phongTerm;
 		}
 
-		//считаем новый отражённый луч 
+		//Г±Г·ГЁГІГ ГҐГ¬ Г­Г®ГўГ»Г© Г®ГІГ°Г Г¦ВёГ­Г­Г»Г© Г«ГіГ· 
 		viewRay.startPoint = intPoint;
 		viewRay.direction = 2 * normal * dotViewNormal - viewRay.direction;
 		coefReflect *= curMaterial.reflectionCoef;
@@ -459,9 +459,9 @@ D3DXCOLOR stScene::addRay(stRay viewRay) {
 	return resPixelColor;
 }
 
-//основная функция расчёта сцены
+//Г®Г±Г­Г®ГўГ­Г Гї ГґГіГ­ГЄГ¶ГЁГї Г°Г Г±Г·ВёГІГ  Г±Г¶ГҐГ­Г»
 void stScene::calcObjects() {
-	d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &d3dRenderSurface); //получаем поверхность буфера для рисования на ней
+	d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &d3dRenderSurface); //ГЇГ®Г«ГіГ·Г ГҐГ¬ ГЇГ®ГўГҐГ°ГµГ­Г®Г±ГІГј ГЎГіГґГҐГ°Г  Г¤Г«Гї Г°ГЁГ±Г®ГўГ Г­ГЁГї Г­Г  Г­ГҐГ©
 
 	if (d3dRenderSurface == NULL) 
 		return;
@@ -470,7 +470,7 @@ void stScene::calcObjects() {
 	D3DSURFACE_DESC d3dSurfDesc;
     d3dRenderSurface->LockRect(&rect, NULL, 0);
 	d3dRenderSurface->GetDesc(&d3dSurfDesc);
-	DWORD * bits = (DWORD *)rect.pBits; // получаем указатель на сырые данные буфера
+	DWORD * bits = (DWORD *)rect.pBits; // ГЇГ®Г«ГіГ·Г ГҐГ¬ ГіГЄГ Г§Г ГІГҐГ«Гј Г­Г  Г±Г»Г°Г»ГҐ Г¤Г Г­Г­Г»ГҐ ГЎГіГґГҐГ°Г 
 	
 	static const float autoExposure = AutoExposure();
 
@@ -484,11 +484,11 @@ void stScene::calcObjects() {
 		projectionDistance = 0.5f * d3dSurfDesc.Width / tanf(0.5f*persp.FOV*M_PI_2);
 	}
 
-	//генерируем параллельные задания
+	//ГЈГҐГ­ГҐГ°ГЁГ°ГіГҐГ¬ ГЇГ Г°Г Г«Г«ГҐГ«ГјГ­Г»ГҐ Г§Г Г¤Г Г­ГЁГї
 	//#pragma omp parallel private(x, y)
 	srand(GetTickCount());
 
-	//проходим по всей поверхности и генерируем лучи
+	//ГЇГ°Г®ГµГ®Г¤ГЁГ¬ ГЇГ® ГўГ±ГҐГ© ГЇГ®ГўГҐГ°ГµГ­Г®Г±ГІГЁ ГЁ ГЈГҐГ­ГҐГ°ГЁГ°ГіГҐГ¬ Г«ГіГ·ГЁ
 	OutputDebugString(L"Start scene calculating\n");
 	for (UINT y = 0; y < d3dSurfDesc.Height; ++y)
 	for (UINT x = 0; x < d3dSurfDesc.Width; ++x) {
@@ -496,12 +496,12 @@ void stScene::calcObjects() {
 		float G = 0.0f;
 		float B = 0.0f;
 		
-		D3DXCOLOR dxResColor(0,0,0,0);
+		glm::vec3 dxResColor(0,0,0,0);
 
 		float fragmenty = (float)y;
 		float fragmentx = (float)x; 
 
-		//коэффициент суперсэмплинга
+		//ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІ Г±ГіГЇГҐГ°Г±ГЅГ¬ГЇГ«ГЁГ­ГЈГ 
 		
 		float coefSupersampling = 1.0f;  {
 		/*
@@ -511,38 +511,38 @@ void stScene::calcObjects() {
 		*/
 
 			if (persp.typePersp == ScenePersp::cubic) {
-				D3DXVECTOR3 start(fragmentx, fragmenty, -1000.0f);
-				D3DXVECTOR3 dir(0.0f, 0.0f, 1.0f);
+				glm::vec3 start(fragmentx, fragmenty, -1000.0f);
+				glm::vec3 dir(0.0f, 0.0f, 1.0f);
 				stRay viewRay = stRay(start, dir);
 				dxResColor = addRay(viewRay);
 			} else {
 				fTotalWeight = 0.0f;
-				D3DXVECTOR3 dir((fragmentx - 0.5f*d3dSurfDesc.Width)/projectionDistance,(fragmenty - 0.5f*d3dSurfDesc.Height)/projectionDistance, 1.0f);
-				float norm = D3DXVec3Dot(&dir, &dir);
+				glm::vec3 dir((fragmentx - 0.5f*d3dSurfDesc.Width)/projectionDistance,(fragmenty - 0.5f*d3dSurfDesc.Height)/projectionDistance, 1.0f);
+				float norm = glm::dot(dir, dir);
 				if (norm == 0.0f)
 					break;
 				dir = dir/sqrt(norm);
-				D3DXVECTOR3 start(0.5f*d3dSurfDesc.Width, 0.5f*d3dSurfDesc.Height, 0.0f);
-				D3DXVECTOR3 ptAimed = start + persp.clearPoint*dir;
+				glm::vec3 start(0.5f*d3dSurfDesc.Width, 0.5f*d3dSurfDesc.Height, 0.0f);
+				glm::vec3 ptAimed = start + persp.clearPoint*dir;
 				int loop_max = 3; if (persp.dispersion == 0.0f) loop_max = 1;
 				for (int i = 0; i < loop_max; ++i) {
 					stRay viewRay = stRay(start, dir);
 					if (persp.dispersion != 0.0f) {
-						D3DXVECTOR3 vDistance((persp.dispersion/RAND_MAX)*float(rand()), (persp.dispersion/RAND_MAX)*float(rand()), 0.0f);
+						glm::vec3 vDistance((persp.dispersion/RAND_MAX)*float(rand()), (persp.dispersion/RAND_MAX)*float(rand()), 0.0f);
 						viewRay.startPoint = viewRay.startPoint + vDistance;
 						viewRay.direction = ptAimed - viewRay.startPoint;
-						float norm = D3DXVec3Dot(&viewRay.direction, &viewRay.direction);
+						float norm = glm::dot(viewRay.direction, viewRay.direction);
 						if (norm == 0.0f)
 							break;
 						viewRay.direction = viewRay.direction/sqrt(norm);
 					}
-					D3DXCOLOR dxTmpColor = addRay(viewRay);
+					glm::vec3 dxTmpColor = addRay(viewRay);
 					fTotalWeight+=1.0f;
 					dxResColor += dxTmpColor;
 				}
 				dxResColor = (1.0f/fTotalWeight) * dxResColor;
 			}
-			//после прогона луча суммируем его если включён суперсэмплинг
+			//ГЇГ®Г±Г«ГҐ ГЇГ°Г®ГЈГ®Г­Г  Г«ГіГ·Г  Г±ГіГ¬Г¬ГЁГ°ГіГҐГ¬ ГҐГЈГ® ГҐГ±Г«ГЁ ГўГЄГ«ГѕГ·ВёГ­ Г±ГіГЇГҐГ°Г±ГЅГ¬ГЇГ«ГЁГ­ГЈ
 			R += dxResColor.r * coefSupersampling; 
 			G += dxResColor.g * coefSupersampling; 
 			B += dxResColor.b * coefSupersampling;

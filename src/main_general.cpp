@@ -53,15 +53,15 @@ int main(int argc, char** argv)
 	// Prepare for simulation. Typically we use a time step of 1/60 of a
 	// second (60Hz) and 10 iterations. This provides a high quality simulation
 	// in most game scenarios.
-	float32 timeStep = 1.0f / 60.0f;
-	int32 velocityIterations = 6;
-	int32 positionIterations = 2;
+	float timeStep = 1.0f / 60.0f;
+	int velocityIterations = 6;
+	int positionIterations = 2;
 
 	//openGL coding
 	while (do_loop) {
 		glClearColor ( 0.0, 1.0, 0.0, 1.0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-		DrawBodies();
+		//DRAW
 		SDL_GL_SwapWindow(window);
 		SDL_Delay(20);
 		EventProcess();

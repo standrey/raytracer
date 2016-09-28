@@ -1,4 +1,6 @@
+#pragma once
 #include <vector>
+#include <memory>
 #include "material.h"
 #include "proceduralTextures.h"
 #include "config_loader.h"
@@ -8,29 +10,29 @@ class stScene
 {
 private:
 	ProceduralTextures texture;
-	unique_ptr<ConfigLoader> objConfig;
+	std::unique_ptr<ConfigLoader> objConfig;
 	bool specularEnabled;
 	bool reflectionEnabled;
 	std::vector<stLight> listPointLights;
 	std::vector<stSphere> listSpheres;
 	std::vector<stMaterial> listMaterials;
-	INT stSceneSizeY;
-	INT stSceneSizeX;
+	int stSceneSizeY;
+	int stSceneSizeX;
 	stRay ** rayArray;
 	IDirect3DTexture9 * screenTexture;
 	IDirect3DDevice9  * d3ddev;
 	IDirect3DSurface9 * d3dRenderSurface;
-	D3DCOLORVALUE ambientColor;
+	glm::vec3 ambientColor;
 	void calcObjects();
 	LPD3DXFONT font;
 	void drawFPS();
-	void calcFPS(DWORD oldTime);
-	D3DCOLORVALUE readCubemap(stRay viewRay);
-	D3DCOLORVALUE readTexture(int, float u, float v, const D3DLOCKED_RECT&);
-	D3DXCOLOR addRay(stRay viewRay);
+	void calcFPS(int oldTime);
+	glm::vec3 readCubemap(stRay viewRay);
+	glm::vec3 readTexture(int, float u, float v, const D3DLOCKED_RECT&);
+	glm::vec3 addRay(stRay viewRay);
 	float FPS;
 	int FrameCnt;
-	DWORD TimeElapsed;
+	unsigned int TimeElapsed;
 	float AutoExposure();
 	ScenePersp persp;
 public:
@@ -38,5 +40,5 @@ public:
 	~stScene();
 	void UpdateObjects();
 	void DrawObjects();
-	void KeyPress(UINT key);
+	void KeyPress(unsigned int key);
 };

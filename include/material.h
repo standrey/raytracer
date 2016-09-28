@@ -1,29 +1,34 @@
 #ifndef _MATERIAL_H
 #define _MATERIAL_H
 
+#include <glm/vec3.hpp>
+#include <glm/geometric.hpp>// glm::cross, glm::normalize
+
+#include <GL/glut.h>
+
 typedef struct {
-	D3DXVECTOR3 position;
+	glm::vec3 position;
 	float intensity;
 } stLight;
 
 typedef struct stRay {
 	stRay() {};
-	stRay(D3DXVECTOR3 pos, D3DXVECTOR3 dir) : startPoint(pos), direction(dir) {};
+	stRay(glm::vec3 pos, glm::vec3 dir) : startPoint(pos), direction(dir) {};
 
-	D3DXVECTOR3 startPoint;
-	D3DXVECTOR3 direction;
-	D3DCOLORVALUE color;
+	glm::vec3 startPoint;
+	glm::vec3 direction;
+	glm::vec3 color;
 } stRay;
 
 typedef struct {
-	FLOAT specPow;
-	FLOAT specVal;
-	FLOAT reflectionCoef;
+	float specPow;
+	float specVal;
+	float reflectionCoef;
 
 	//it's diffuse color
-	D3DXCOLOR color;
+	glm::vec3 color;
 	//color2 use only for turbulence texture
-	D3DXCOLOR color2;
+	glm::vec3 color2;
 
 	float bump;
 	bool turbulence;
@@ -31,45 +36,45 @@ typedef struct {
 
 typedef struct {
 	int MaterialId;
-	D3DXVECTOR3 position;
+	glm::vec3 position;
 	float radius;
 
 	bool RayCollision(stRay r, float & distance)
 	{
 		const static float t = 2000;
 		//first of all we must transform ray from world space to sphere space
-		D3DXVECTOR3 rayPoint = r.startPoint - position;
+		glm::vec3 rayPoint = r.startPoint - position;
 
 		//calc codfficients
-		float A = D3DXVec3Dot(&(r.direction), &(r.direction));
-		float B = 2 * D3DXVec3Dot(&rayPoint, &(r.direction));
-		float C = D3DXVec3Dot(&rayPoint, &rayPoint) - radius * radius;
+		float A = glm::dot(r.direction, r.direction);
+		float B = 2 * glm::dot(rayPoint, r.direction);
+		float C = glm::dot(rayPoint, rayPoint) - radius * radius;
 		float discriminant = B * B - 4 * A * C;
 		if (discriminant < 0)
-			return FALSE;
+			return false;
 		float t0 = (-B - sqrtf(discriminant))/(2*A);
 		float t1 = (-B + sqrtf(discriminant))/(2*A);
 
 		if (t0 > 0.1 && t0 < t)
 		{
 			distance = t0;
-			return TRUE;
+			return true;
 		}
 		if (t1 > 0.1 && t1 < t)
 		{
 			distance = t1;
-			return TRUE;
+			return true;
 		}
-		return FALSE;
+		return false;
 	}
 } stSphere;
 
 class Cubemap{
 public:
-	Cubemap() : bExposed(false), bsRGB(false), exposure(1.0), texture(nullptr) {};
-	~Cubemap() {if (texture!=nullptr) texture->Release();}
-	IDirect3DTexture9 * texture;
-	DWORD *				bits;
+	Cubemap() : bExposed(false), bsRGB(false), exposure(1.0), texture(0) {};
+	~Cubemap() {}
+	GLuint texture;
+	unsigned int *				bits;
 	int					h;
 	int					w;
 	enum {up = 0, down, right, left, forward, backward};

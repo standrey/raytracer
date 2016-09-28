@@ -1,16 +1,18 @@
-#ifndef CONFIG_LOADER_H
-#define CONFIG_LOADER_H
+#pragma once
 
 #include <string>
 #include <fstream>
 #include <list>
-#include <vector>
+#include <vector>#include <memory>
+#include <utility>
+		
+		
 #include "material.h"
 
 using namespace std;
 
-typedef pair<string, float> typeParamValue;
-typedef pair<string, list<typeParamValue>> typeMaterial;
+typedef std::pair<string, float> typeParamValue;
+typedef std::pair<string, list<typeParamValue>> typeMaterial;
 
 class ConfigLoader
 {
@@ -37,5 +39,3 @@ private:
 	void readRawMaterialsToStruct(list<typeMaterial> & rawMaterialsList);
 	void readRawSpheresToStruct(list<typeMaterial> & rawMaterialsList);
 };
-
-#endif
