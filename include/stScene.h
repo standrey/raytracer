@@ -19,16 +19,14 @@ private:
 	int stSceneSizeY;
 	int stSceneSizeX;
 	stRay ** rayArray;
-	IDirect3DTexture9 * screenTexture;
-	IDirect3DDevice9  * d3ddev;
-	IDirect3DSurface9 * d3dRenderSurface;
+	GLuint screenTexture;
 	glm::vec3 ambientColor;
 	void calcObjects();
-	LPD3DXFONT font;
+	//LPD3DXFONT font;
 	void drawFPS();
-	void calcFPS(int oldTime);
-	glm::vec3 readCubemap(stRay viewRay);
-	glm::vec3 readTexture(int, float u, float v, const D3DLOCKED_RECT&);
+	//void calcFPS(int oldTime);
+	//glm::vec3 readCubemap(stRay viewRay);
+	//glm::vec3 readTexture(int, float u, float v, const D3DLOCKED_RECT&);
 	glm::vec3 addRay(stRay viewRay);
 	float FPS;
 	int FrameCnt;
@@ -36,7 +34,7 @@ private:
 	float AutoExposure();
 	ScenePersp persp;
 public:
-	stScene(IDirect3DDevice9 * dev, INT width, INT height);
+	stScene(int width, int height);
 	~stScene();
 	void UpdateObjects();
 	void DrawObjects();

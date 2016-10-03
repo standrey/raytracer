@@ -27,7 +27,7 @@ public:
 private:
 	ConfigLoader() {};
 
-	list<typeMaterial> readSection(string & sectionName);
+	list<typeMaterial> readSection(string sectionName);
 	string configFilename;
 
 	vector<stMaterial> materialList;

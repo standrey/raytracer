@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
-
+#include <glm/vec4.hpp>
+#include <glm/geometric.hpp>
 #include "stScene.h"
 
 float InvSqrt (float x){
@@ -24,7 +25,7 @@ float srgbEncode(float c)
     }
 }
 
-stScene::stScene(IDirect3DDevice9 * dev, INT width, INT height)
+stScene::stScene(int width, int height)
 {
 	string ResFolder("res");
 
@@ -43,11 +44,10 @@ stScene::stScene(IDirect3DDevice9 * dev, INT width, INT height)
 			rayArray[i][j].color.b = 255;
 		}
 
-	d3ddev = dev;
 	ambientColor.r = 0.3f;
 	ambientColor.g = 0.3f;
 	ambientColor.b = 0.3f;
-	D3DXCreateFont(d3ddev, 24, 0, 500, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY,    DEFAULT_PITCH | FF_DONTCARE, L"Arial", &font);
+//	D3DXCreateFont(d3ddev, 24, 0, 500, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY,    DEFAULT_PITCH | FF_DONTCARE, L"Arial", &font);
 	FPS = 0.0f;
 	FrameCnt = 0;
 	TimeElapsed = 0;
@@ -61,20 +61,23 @@ stScene::stScene(IDirect3DDevice9 * dev, INT width, INT height)
 	listSpheres = objConfig->GetSpheres();
 
 	//init cubic environment
-	HRESULT hr = D3DXCreateTextureFromFile(d3ddev, L"res\\cubictexture_2.jpg", &(objConfig->m_cubemap->texture));
-	if (FAILED(hr)) {
-		MessageBox(NULL, L"Error while reading cubictexture.jpeg", L"Error!", MB_OK | MB_ICONEXCLAMATION);
-		return;
-	}
-	D3DSURFACE_DESC texDesc;
-	objConfig->m_cubemap->texture->GetLevelDesc(0, &texDesc);
+//	HRESULT hr = D3DXCreateTextureFromFile(d3ddev, L"res\\cubictexture_2.jpg", &(objConfig->m_cubemap->texture));
+//	if (FAILED(hr)) {
+//		std::cerr<<"Error while reading cubictexture.jpeg"<<std::endl;
+//		return;
+//	}
+
+
+//	D3DSURFACE_DESC texDesc;
+//	objConfig->m_cubemap->texture->GetLevelDesc(0, &texDesc);
 	
-	//texture FVF FORMAT is DWORD X8R8G8B8
+	//texture FVF FORMAT is unsigned int X8R8G8B8
 	//real texture size after load into DIRECTX (128x1024 (H*W) instead of 100x600)
 	//div by 6 because of 6 edges of texture
-	objConfig->m_cubemap->h = texDesc.Height/6;
-	objConfig->m_cubemap->w = texDesc.Width;
-
+//	objConfig->m_cubemap->h = texDesc.Height/6;
+//	objConfig->m_cubemap->w = texDesc.Width;
+	
+	/*
 	//debug code begin
 	IDirect3DTexture9 * textToSave;
 	hr = D3DXCreateTexture(d3ddev, texDesc.Width, texDesc.Height, 1, D3DUSAGE_DYNAMIC, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &textToSave);
@@ -85,20 +88,21 @@ stScene::stScene(IDirect3DDevice9 * dev, INT width, INT height)
 	D3DLOCKED_RECT dstRect;
     ZeroMemory(&dstRect, sizeof(D3DLOCKED_RECT));
 
-	hr = objConfig->m_cubemap->texture->LockRect(0, &srcRect, NULL, D3DLOCK_READONLY);
-	hr = textToSave->LockRect(0, &dstRect, NULL, D3DLOCK_READONLY);
+	hr = objConfig->m_cubemap->texture->LockRect(0, &srcRect, null, D3DLOCK_READONLY);
+	hr = textToSave->LockRect(0, &dstRect, null, D3DLOCK_READONLY);
 
 	int selectedPart = 1;
 	int texturePartWidth = texDesc.Width/6;
 	for (int y = 0; y < texturePartWidth; y++)
 		for (int x = 0; x < texDesc.Height; x++) {
-			((DWORD *)dstRect.pBits)[y + x * (dstRect.Pitch/4)] = ((DWORD *)srcRect.pBits)[y + x * (srcRect.Pitch/4) + texturePartWidth * selectedPart];
+			((unsigned int *)dstRect.pBits)[y + x * (dstRect.Pitch/4)] = ((unsigned int *)srcRect.pBits)[y + x * (srcRect.Pitch/4) + texturePartWidth * selectedPart];
 		}
 	objConfig->m_cubemap->texture->UnlockRect(0);
 	textToSave->UnlockRect(0);
-	hr = D3DXSaveTextureToFile(L"res\\debugtexture.jpg", D3DXIFF_JPG, textToSave, NULL);
+	hr = D3DXSaveTextureToFile(L"res\\debugtexture.jpg", D3DXIFF_JPG, textToSave, null);
 	textToSave->Release();
 	//debug code end
+	*/
 }
 
 stScene::~stScene() {
@@ -108,8 +112,9 @@ stScene::~stScene() {
 	listSpheres.clear();
 }
 
-void stScene::KeyPress(UINT key)
+void stScene::KeyPress(unsigned int  key)
 {
+	/*
 	switch (key)
 	{
 	case VK_F1:
@@ -133,6 +138,7 @@ void stScene::KeyPress(UINT key)
 	default:
 		break;
 	}
+	*/
 }
 
 void stScene::UpdateObjects()
@@ -141,21 +147,20 @@ void stScene::UpdateObjects()
 
 void stScene::DrawObjects()
 {	
-	DWORD oldTime = timeGetTime();
-	d3ddev->Clear(0, 0, D3DCLEAR_TARGET , D3DCOLOR_XRGB(100, 100, 100), 1.0f, 0);
-	d3ddev->BeginScene();
+	//unsigned int oldTime = timeGetTime();
+
 	calcObjects();
-	drawFPS();
-	d3ddev->EndScene();
-	d3ddev->Present(0, 0, 0, 0);
-	calcFPS(oldTime);
+	//drawFPS();
+
+	//calcFPS(oldTime);
 }
 
-void stScene::calcFPS(DWORD oldTime)
+/*
+void stScene::calcFPS(unsigned int oldTime)
 {
       FrameCnt++;
-      DWORD newTime = timeGetTime(); // çàïèñûâàåì â íüþòàéì âðåìÿ ïîñëå âñåõ âûïîëíåííûõ îïåðàöèÿõ
-      DWORD deltatime = newTime - oldTime; // óçíàåì ñêîëüêî âðåìåíè ïðîõîäèò îò íà÷àëà äî êîíöà
+      unsigned int newTime = timeGetTime(); // çàïèñûâàåì â íüþòàéì âðåìÿ ïîñëå âñåõ âûïîëíåííûõ îïåðàöèÿõ
+      unsigned int deltatime = newTime - oldTime; // óçíàåì ñêîëüêî âðåìåíè ïðîõîäèò îò íà÷àëà äî êîíöà
       TimeElapsed += deltatime; // è ïðèáàâëÿåì ýòó ðàçíèöó ê òàéìýëàïñåäó
  
       if(TimeElapsed >= 1000) // åñëè â òàéìýëàïñåäå íàêîïèëîñü 0.5 ñåê, òî
@@ -165,21 +170,20 @@ void stScene::calcFPS(DWORD oldTime)
         FrameCnt = 0; // è îáíóëÿåì êîë-âî êàäðîâ
       }
 }
-
+*/
 void stScene::drawFPS()
 {
-	wchar_t textbuffer[255];
-    swprintf( textbuffer, L"FPS: %.3f ", FPS);
+	//wchar_t textbuffer[255];
+    //swprintf( textbuffer, L"FPS: %.3f ", FPS);
     
-	RECT FontPosition;
-    FontPosition.top    = 10; 
-    FontPosition.left   = 10;
-    FontPosition.right  = 610;
-    FontPosition.bottom = 30;
-
-    font->DrawText( NULL, textbuffer, -1, &FontPosition, DT_LEFT, 0xFFFFFF80 );
+	//RECT FontPosition;
+    //FontPosition.top    = 10; 
+    //FontPosition.left   = 10;
+    //FontPosition.right  = 610;
+    //FontPosition.bottom = 30;
+    //font->DrawText( null, textbuffer, -1, &FontPosition, DT_LEFT, 0xFFFFFF80 );
 }
-
+/*
 glm::vec3 stScene::readTexture(int iTileTex, float uCoord, float vCoord, const D3DLOCKED_RECT & rect)
 {
 	float sizeU = (float)objConfig->m_cubemap->w;
@@ -198,20 +202,20 @@ glm::vec3 stScene::readTexture(int iTileTex, float uCoord, float vCoord, const D
     vmin = (int)min(max((float)vmin, 0.0f), sizeV - 1.0f);
 	vmax = (int)min(max((float)vmax, 0.0f), sizeV - 1.0f);
 
-	//texture FVF FORMAT is DWORD X8R8G8B8
+	//texture FVF FORMAT is unsigned int X8R8G8B8
 	//real texture size after load into DIRECTX (1024x128 (H*W) instead of 600x100)
-	DWORD * dwColor = (DWORD *)rect.pBits + rect.Pitch/4*objConfig->m_cubemap->h*iTileTex;
+	unsigned int * dwColor = (unsigned int *)rect.pBits + rect.Pitch/4*objConfig->m_cubemap->h*iTileTex;
 	//÷òîáû ïðîèçâåñòè ìàòåìàòè÷åñêèå îïåðàöèè ñ öâåòîì äåëàåì èç DWORD "ïðàâèëüíóþ" ñòðóêòóðó
 	glm::vec3 colorP0(dwColor[umin + (rect.Pitch/4) * vmin]);
 	glm::vec3 colorP1(dwColor[umax + (rect.Pitch/4) * vmin]);
 	glm::vec3 colorP2(dwColor[umin + (rect.Pitch/4) * vmax]);
 	glm::vec3 colorP3(dwColor[umax + (rect.Pitch/4) * vmax]);
-	/*
-	D3DCOLOR P0 = ((DWORD *)rect.pBits)[umin + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
-	D3DCOLOR P1 = ((DWORD *)rect.pBits)[umax + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
-	D3DCOLOR P2 = ((DWORD *)rect.pBits)[umin + (rect.Pitch/4) * vmax + (rect.Pitch/4)/6 * iTileTex];
-	D3DCOLOR P3 = ((DWORD *)rect.pBits)[umax + (rect.Pitch/4) * vmax + (rect.Pitch/4)/6 * iTileTex];
-	*/
+	
+	///D3DCOLOR P0 = ((unsigned int *)rect.pBits)[umin + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
+	///D3DCOLOR P1 = ((unsigned int *)rect.pBits)[umax + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
+	///D3DCOLOR P2 = ((unsigned int *)rect.pBits)[umin + (rect.Pitch/4) * vmax + (rect.Pitch/4)/6 * iTileTex];
+	///D3DCOLOR P3 = ((unsigned int *)rect.pBits)[umax + (rect.Pitch/4) * vmax + (rect.Pitch/4)/6 * iTileTex];
+	
 	outputColor = ((1 - u) * colorP0 + u * colorP1) * (1-v) + ((1 - u) * colorP2 + u * colorP3) * v;
 	
 	return outputColor;
@@ -223,12 +227,12 @@ glm::vec3 stScene::readCubemap(stRay viewRay)
 
 	D3DLOCKED_RECT rect;
     ZeroMemory(&rect, sizeof(D3DLOCKED_RECT));
-	HRESULT hr = objConfig->m_cubemap->texture->LockRect(0, &rect, NULL, D3DLOCK_READONLY);
+	HRESULT hr = objConfig->m_cubemap->texture->LockRect(0, &rect, null, D3DLOCK_READONLY);
 	if (FAILED(hr)) {
 		return outputColor;
 	}
 
-	if (screenTexture == NULL) {
+	if (screenTexture == null) {
 		return outputColor;
 	}
 
@@ -314,9 +318,8 @@ glm::vec3 stScene::readCubemap(stRay viewRay)
 	
 	return outputColor;
 }
-
+*/
 float stScene::AutoExposure() {
-	OutputDebugString(L"Start autoexposure calculating\n");
 	//âûäåðæêà
 	#define ACCUMULATION_SIZE 16
 	float exposure = -1.0f;
@@ -338,14 +341,13 @@ float stScene::AutoExposure() {
 		// put the medium luminance to an intermediate gray value
 		exposure = logf(0.6f) / mediumLuminance;
 	}
-	OutputDebugString(L"End autoexposure calculating\n");
 	return exposure;
 }
 
 glm::vec3 stScene::addRay(stRay viewRay) {
 	
-	glm::vec3 ambientColor(.2f, .2f, .2f, 1.0); //ðàññåÿíûé ñâåò
-	glm::vec3 resPixelColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glm::vec4 ambientColor(.2f, .2f, .2f, 1.0); //ðàññåÿíûé ñâåò
+	glm::vec4 resPixelColor(0.0f, 0.0f, 0.0f, 0.0f);
 	const int maxLevelReflection = 2;//óðîâåíü âëîæåííîñò îòðàæåíèÿ ëó÷à
 	int level = maxLevelReflection;//òåêóùèé óðîâåíü âëîæåííîñòè ëó÷à
 
@@ -374,7 +376,10 @@ glm::vec3 stScene::addRay(stRay viewRay) {
 			if (level == maxLevelReflection)
 				resPixelColor = ambientColor;
 			else 
-				resPixelColor += readCubemap(viewRay);
+				// STADNIK 2016 
+				// resPixelColor += readCubemap(viewRay);
+				resPixelColor = glm::vec4(1,1,1,1);
+				// DEFAULT COLOR
 			//âûõîäèì èç öèêëà, ò ê ëó÷ óæå íå áóäåò îòðàæàòüñÿ
 			break;
 		}
@@ -382,8 +387,8 @@ glm::vec3 stScene::addRay(stRay viewRay) {
 		glm::vec3 intPoint = viewRay.startPoint + distance * viewRay.direction; //òî÷êà ïåðåñå÷åíèÿ â ìèðîâûõ êîîðäèíàòàõ
 		glm::vec3 normal = intPoint - curSphere->position; //íîðìàëü ê òî÷êå ïåðåñå÷åíèÿ
 
-		D3DXVec3Normalize(&viewRay.direction, &viewRay.direction); //íîðìàëèçóåì âåêòîð ëó÷à
-		D3DXVec3Normalize(&normal, &normal);//íîðìàëèçóåì íîðìàëü
+		viewRay.direction = glm::normalize(viewRay.direction); //íîðìàëèçóåì âåêòîð ëó÷à
+		normal = glm::normalize(normal);//íîðìàëèçóåì íîðìàëü
 		stMaterial & curMaterial = listMaterials.at(curSphere->MaterialId);
 
 		//èçìåíÿåì íîðìàëü â åñëè ýòî áóìï ïîâåðõíîñòü
@@ -405,7 +410,7 @@ glm::vec3 stScene::addRay(stRay viewRay) {
 		for (std::vector<stLight>::iterator pPointLight = listPointLights.begin(); pPointLight < listPointLights.end(); pPointLight++) {
 			glm::vec3 lightPos = (*pPointLight).position;
 			glm::vec3 lightDirection = lightPos - intPoint; //âû÷èñëÿåì íàïðàâëåíèå ñâåòà â òî÷êå ïåðåñå÷åíèÿ
-			D3DXVec3Normalize(&lightDirection, &lightDirection);
+			lightDirection = glm::normalize(lightDirection);
 			
 			stSphere * curLightSphere = 0;
 			float distance = 2000.0f;
@@ -441,7 +446,7 @@ glm::vec3 stScene::addRay(stRay viewRay) {
 
 			//specular by Phong
 			float phongTerm = 0;
-			glm::vec3 reflectDir = 2 * normal * dotLightNormal - lightDirection;
+			glm::vec3 reflectDir = 2.0f * normal * dotLightNormal - lightDirection;
 			phongTerm = max(glm::dot(viewRay.direction, reflectDir), 0.0f);
 			phongTerm = curMaterial.specVal * powf(phongTerm, curMaterial.specPow) * coefReflect * (*pPointLight).intensity;
 			resPixelColor.r += phongTerm;
@@ -451,7 +456,7 @@ glm::vec3 stScene::addRay(stRay viewRay) {
 
 		//ñ÷èòàåì íîâûé îòðàæ¸ííûé ëó÷ 
 		viewRay.startPoint = intPoint;
-		viewRay.direction = 2 * normal * dotViewNormal - viewRay.direction;
+		viewRay.direction = 2.0f * normal * dotViewNormal - viewRay.direction;
 		coefReflect *= curMaterial.reflectionCoef;
 		level++;
 	} while ((coefReflect > 0.0f) && (level <= 3));
@@ -460,17 +465,9 @@ glm::vec3 stScene::addRay(stRay viewRay) {
 }
 
 //îñíîâíàÿ ôóíêöèÿ ðàñ÷¸òà ñöåíû
-void stScene::calcObjects() {
-	d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &d3dRenderSurface); //ïîëó÷àåì ïîâåðõíîñòü áóôåðà äëÿ ðèñîâàíèÿ íà íåé
+void stScene::calcObjects(unsigned int w, unsigned int h) {
 
-	if (d3dRenderSurface == NULL) 
-		return;
-
-	D3DLOCKED_RECT rect;
-	D3DSURFACE_DESC d3dSurfDesc;
-    d3dRenderSurface->LockRect(&rect, NULL, 0);
-	d3dRenderSurface->GetDesc(&d3dSurfDesc);
-	DWORD * bits = (DWORD *)rect.pBits; // ïîëó÷àåì óêàçàòåëü íà ñûðûå äàííûå áóôåðà
+	static float* pixels = new float[w*h*3];
 	
 	static const float autoExposure = AutoExposure();
 
@@ -486,12 +483,11 @@ void stScene::calcObjects() {
 
 	//ãåíåðèðóåì ïàðàëëåëüíûå çàäàíèÿ
 	//#pragma omp parallel private(x, y)
-	srand(GetTickCount());
+	srand(time(0));
 
 	//ïðîõîäèì ïî âñåé ïîâåðõíîñòè è ãåíåðèðóåì ëó÷è
-	OutputDebugString(L"Start scene calculating\n");
-	for (UINT y = 0; y < d3dSurfDesc.Height; ++y)
-	for (UINT x = 0; x < d3dSurfDesc.Width; ++x) {
+	for (unsigned int  y = 0; y < d3dSurfDesc.Height; ++y)
+	for (unsigned int  x = 0; x < d3dSurfDesc.Width; ++x) {
 		float R = 0.0f;
 		float G = 0.0f;
 		float B = 0.0f;
@@ -558,9 +554,6 @@ void stScene::calcObjects() {
 			G = srgbEncode(G);
 			B = srgbEncode(B);
 			
-			bits[y * rect.Pitch / 4 + x]  = D3DCOLOR_XRGB(min(UINT(R*255),255), min(UINT(G*255),255), min(UINT(B*255),255));
+			bits[y * rect.Pitch / 4 + x]  = D3DCOLOR_XRGB(min(unsigned int (R*255),255), min(unsigned int (G*255),255), min(unsigned int (B*255),255));
 	}
-	OutputDebugString(L"End scene calculating\n");
-	d3dRenderSurface->UnlockRect();
-	d3dRenderSurface->Release();
 }

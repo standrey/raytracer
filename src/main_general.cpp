@@ -16,9 +16,7 @@ extern SDL_Renderer		* renderer;
 extern SDL_GLContext	context;
 extern GLuint			texture;
 
-SDL_Texture *background = nullptr;
 
-int sc = 40;
 bool do_loop = true;
 
 void EventProcess() {
@@ -46,28 +44,18 @@ void EventProcess() {
 
 int main(int argc, char** argv)
 {
-	Display_InitSDL2();
-	InitOpenGL();
-	InitTexture();
-
-	// Prepare for simulation. Typically we use a time step of 1/60 of a
-	// second (60Hz) and 10 iterations. This provides a high quality simulation
-	// in most game scenarios.
-	float timeStep = 1.0f / 60.0f;
-	int velocityIterations = 6;
-	int positionIterations = 2;
+	unsigned int window_width = 1024, window_height = 1024;
 
 	//openGL coding
 	while (do_loop) {
 		glClearColor ( 0.0, 1.0, 0.0, 1.0 );
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		glClear( GL_COLOR_BUFFER_BIT);
 		//DRAW
+		auto pixels = calcObjects(window_width, window_height);
+		glDrawPixels(window_width,window_height,GL_RGB,GL_FLOAT,pixels);
 		SDL_GL_SwapWindow(window);
-		SDL_Delay(20);
 		EventProcess();
 	}
-
-	CleanResources();
 
 	return 0;
 }

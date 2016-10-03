@@ -1,5 +1,6 @@
 #include "config_loader.h"
 
+#include <list>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -18,7 +19,7 @@ ConfigLoader::ConfigLoader(string configfile)
 
 	if (rawMaterialsList.empty() || rawLightsList.empty() || rawSpheresList.empty())
 	{
-		MessageBox(NULL, L"Error while reading config.txt. Empty one of section material list", L"Error!", MB_OK | MB_ICONEXCLAMATION);
+		std::cerr<<"Error while reading config.txt. Empty one of section material list"<<std::endl;
 		return;
 	}
 
@@ -164,7 +165,7 @@ void ConfigLoader::readRawCubemapToClass(list<typeMaterial> & rawMaterialsList)
 	}
 }
 
-list<typeMaterial> ConfigLoader::readSection(string & sectionName)
+list<typeMaterial> ConfigLoader::readSection(string sectionName)
 {
 	list<typeParamValue> listOfValues;
 	list<typeMaterial> materials;
@@ -172,7 +173,7 @@ list<typeMaterial> ConfigLoader::readSection(string & sectionName)
 	ifstream config(configFilename);
 	if (config.bad() || config.fail())
 	{
-		MessageBox(NULL, L"Failed to read config file config.txt", L"Error!", MB_OK | MB_ICONEXCLAMATION);
+		std::cerr<<"Failed to read config file config.txt"<<std::endl;
 		return materials;
 	}
 

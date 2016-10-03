@@ -26,9 +26,9 @@ typedef struct {
 	float reflectionCoef;
 
 	//it's diffuse color
-	glm::vec3 color;
+	glm::vec4 color;
 	//color2 use only for turbulence texture
-	glm::vec3 color2;
+	glm::vec4 color2;
 
 	float bump;
 	bool turbulence;
