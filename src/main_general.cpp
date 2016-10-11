@@ -3,6 +3,7 @@
 #include <vector>
 #include <list>
 #include <cmath>
+#include "stScene.h"
 
 extern "C"
 {
@@ -46,12 +47,13 @@ int main(int argc, char** argv)
 {
 	unsigned int window_width = 1024, window_height = 1024;
 
+	auto mainscene = std::make_unique<stScene>(window_width, window_height);
 	//openGL coding
 	while (do_loop) {
 		glClearColor ( 0.0, 1.0, 0.0, 1.0 );
 		glClear( GL_COLOR_BUFFER_BIT);
 		//DRAW
-		auto pixels = calcObjects(window_width, window_height);
+		auto pixels = mainscene->calcPixels(window_width, window_height);
 		glDrawPixels(window_width,window_height,GL_RGB,GL_FLOAT,pixels);
 		SDL_GL_SwapWindow(window);
 		EventProcess();

@@ -1,9 +1,9 @@
 #ifndef _MATERIAL_H
 #define _MATERIAL_H
 
+#include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>// glm::cross, glm::normalize
-
 #include <GL/glut.h>
 
 typedef struct {

@@ -1,7 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <glm/vec4.hpp>
-#include <glm/geometric.hpp>
+
 #include "stScene.h"
 
 float InvSqrt (float x){
@@ -25,7 +24,7 @@ float srgbEncode(float c)
     }
 }
 
-stScene::stScene(int width, int height)
+stScene::stScene(IDirect3DDevice9 * dev, int width, int height)
 {
 	string ResFolder("res");
 
@@ -44,10 +43,11 @@ stScene::stScene(int width, int height)
 			rayArray[i][j].color.b = 255;
 		}
 
+	d3ddev = dev;
 	ambientColor.r = 0.3f;
 	ambientColor.g = 0.3f;
 	ambientColor.b = 0.3f;
-//	D3DXCreateFont(d3ddev, 24, 0, 500, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY,    DEFAULT_PITCH | FF_DONTCARE, L"Arial", &font);
+	D3DXCreateFont(d3ddev, 24, 0, 500, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY,    DEFAULT_PITCH | FF_DONTCARE, L"Arial", &font);
 	FPS = 0.0f;
 	FrameCnt = 0;
 	TimeElapsed = 0;
@@ -61,23 +61,20 @@ stScene::stScene(int width, int height)
 	listSpheres = objConfig->GetSpheres();
 
 	//init cubic environment
-//	HRESULT hr = D3DXCreateTextureFromFile(d3ddev, L"res\\cubictexture_2.jpg", &(objConfig->m_cubemap->texture));
-//	if (FAILED(hr)) {
-//		std::cerr<<"Error while reading cubictexture.jpeg"<<std::endl;
-//		return;
-//	}
-
-
-//	D3DSURFACE_DESC texDesc;
-//	objConfig->m_cubemap->texture->GetLevelDesc(0, &texDesc);
+	HRESULT hr = D3DXCreateTextureFromFile(d3ddev, L"res\\cubictexture_2.jpg", &(objConfig->m_cubemap->texture));
+	if (FAILED(hr)) {
+		std::cerr<<"Error while reading cubictexture.jpeg"<<std::endl;
+		return;
+	}
+	D3DSURFACE_DESC texDesc;
+	objConfig->m_cubemap->texture->GetLevelDesc(0, &texDesc);
 	
 	//texture FVF FORMAT is unsigned int X8R8G8B8
 	//real texture size after load into DIRECTX (128x1024 (H*W) instead of 100x600)
 	//div by 6 because of 6 edges of texture
-//	objConfig->m_cubemap->h = texDesc.Height/6;
-//	objConfig->m_cubemap->w = texDesc.Width;
-	
-	/*
+	objConfig->m_cubemap->h = texDesc.Height/6;
+	objConfig->m_cubemap->w = texDesc.Width;
+
 	//debug code begin
 	IDirect3DTexture9 * textToSave;
 	hr = D3DXCreateTexture(d3ddev, texDesc.Width, texDesc.Height, 1, D3DUSAGE_DYNAMIC, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &textToSave);
@@ -102,7 +99,6 @@ stScene::stScene(int width, int height)
 	hr = D3DXSaveTextureToFile(L"res\\debugtexture.jpg", D3DXIFF_JPG, textToSave, null);
 	textToSave->Release();
 	//debug code end
-	*/
 }
 
 stScene::~stScene() {
@@ -149,13 +145,12 @@ void stScene::DrawObjects()
 {	
 	//unsigned int oldTime = timeGetTime();
 
-	// calcObjects();
+	calcObjects();
 	//drawFPS();
 
 	//calcFPS(oldTime);
 }
 
-/*
 void stScene::calcFPS(unsigned int oldTime)
 {
       FrameCnt++;
@@ -170,11 +165,11 @@ void stScene::calcFPS(unsigned int oldTime)
         FrameCnt = 0; // è îáíóëÿåì êîë-âî êàäðîâ
       }
 }
-*/
+
 void stScene::drawFPS()
 {
-	//wchar_t textbuffer[255];
-    //swprintf( textbuffer, L"FPS: %.3f ", FPS);
+	wchar_t textbuffer[255];
+    swprintf( textbuffer, L"FPS: %.3f ", FPS);
     
 	//RECT FontPosition;
     //FontPosition.top    = 10; 
@@ -183,7 +178,7 @@ void stScene::drawFPS()
     //FontPosition.bottom = 30;
     //font->DrawText( null, textbuffer, -1, &FontPosition, DT_LEFT, 0xFFFFFF80 );
 }
-/*
+
 glm::vec3 stScene::readTexture(int iTileTex, float uCoord, float vCoord, const D3DLOCKED_RECT & rect)
 {
 	float sizeU = (float)objConfig->m_cubemap->w;
@@ -210,12 +205,12 @@ glm::vec3 stScene::readTexture(int iTileTex, float uCoord, float vCoord, const D
 	glm::vec3 colorP1(dwColor[umax + (rect.Pitch/4) * vmin]);
 	glm::vec3 colorP2(dwColor[umin + (rect.Pitch/4) * vmax]);
 	glm::vec3 colorP3(dwColor[umax + (rect.Pitch/4) * vmax]);
-	
-	///D3DCOLOR P0 = ((unsigned int *)rect.pBits)[umin + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
-	///D3DCOLOR P1 = ((unsigned int *)rect.pBits)[umax + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
-	///D3DCOLOR P2 = ((unsigned int *)rect.pBits)[umin + (rect.Pitch/4) * vmax + (rect.Pitch/4)/6 * iTileTex];
-	///D3DCOLOR P3 = ((unsigned int *)rect.pBits)[umax + (rect.Pitch/4) * vmax + (rect.Pitch/4)/6 * iTileTex];
-	
+	/*
+	D3DCOLOR P0 = ((unsigned int *)rect.pBits)[umin + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
+	D3DCOLOR P1 = ((unsigned int *)rect.pBits)[umax + (rect.Pitch/4) * vmin + (rect.Pitch/4)/6 * iTileTex];
+	D3DCOLOR P2 = ((unsigned int *)rect.pBits)[umin + (rect.Pitch/4) * vmax + (rect.Pitch/4)/6 * iTileTex];
+	D3DCOLOR P3 = ((unsigned int *)rect.pBits)[umax + (rect.Pitch/4) * vmax + (rect.Pitch/4)/6 * iTileTex];
+	*/
 	outputColor = ((1 - u) * colorP0 + u * colorP1) * (1-v) + ((1 - u) * colorP2 + u * colorP3) * v;
 	
 	return outputColor;
@@ -318,7 +313,7 @@ glm::vec3 stScene::readCubemap(stRay viewRay)
 	
 	return outputColor;
 }
-*/
+
 float stScene::AutoExposure() {
 	//âûäåðæêà
 	#define ACCUMULATION_SIZE 16
@@ -332,7 +327,7 @@ float stScene::AutoExposure() {
 	for (int y = 0; y < ACCUMULATION_SIZE; ++y)
 	for (int x = 0; x < ACCUMULATION_SIZE; ++x) {
 		stRay viewRay = stRay(glm::vec3(float(x) * accumulationFactor, float(y) * accumulationFactor, -1000.0f), glm::vec3(0.0f, 0.0f ,1.0f));
-		glm::vec4 currentColor = addRay(viewRay);
+		glm::vec3 currentColor = addRay(viewRay);
 		float luminance = 0.2126f * currentColor.r + 0.715160f * currentColor.g + 0.072169f * currentColor.b;
 		mediumPoint += mediumPointWeight * (luminance * luminance);
 	}
@@ -344,10 +339,10 @@ float stScene::AutoExposure() {
 	return exposure;
 }
 
-glm::vec4 stScene::addRay(stRay viewRay) {
+glm::vec3 stScene::addRay(stRay viewRay) {
 	
-	glm::vec4 ambientColor(.2f, .2f, .2f, 1.0); //ðàññåÿíûé ñâåò
-	glm::vec4 resPixelColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glm::vec3 ambientColor(.2f, .2f, .2f, 1.0); //ðàññåÿíûé ñâåò
+	glm::vec3 resPixelColor(0.0f, 0.0f, 0.0f, 0.0f);
 	const int maxLevelReflection = 2;//óðîâåíü âëîæåííîñò îòðàæåíèÿ ëó÷à
 	int level = maxLevelReflection;//òåêóùèé óðîâåíü âëîæåííîñòè ëó÷à
 
@@ -376,10 +371,7 @@ glm::vec4 stScene::addRay(stRay viewRay) {
 			if (level == maxLevelReflection)
 				resPixelColor = ambientColor;
 			else 
-				// STADNIK 2016 
-				// resPixelColor += readCubemap(viewRay);
-				resPixelColor = glm::vec4(1,1,1,1);
-				// DEFAULT COLOR
+				resPixelColor += readCubemap(viewRay);
 			//âûõîäèì èç öèêëà, ò ê ëó÷ óæå íå áóäåò îòðàæàòüñÿ
 			break;
 		}
@@ -387,8 +379,8 @@ glm::vec4 stScene::addRay(stRay viewRay) {
 		glm::vec3 intPoint = viewRay.startPoint + distance * viewRay.direction; //òî÷êà ïåðåñå÷åíèÿ â ìèðîâûõ êîîðäèíàòàõ
 		glm::vec3 normal = intPoint - curSphere->position; //íîðìàëü ê òî÷êå ïåðåñå÷åíèÿ
 
-		viewRay.direction = glm::normalize(viewRay.direction); //íîðìàëèçóåì âåêòîð ëó÷à
-		normal = glm::normalize(normal);//íîðìàëèçóåì íîðìàëü
+		D3DXVec3Normalize(&viewRay.direction, &viewRay.direction); //íîðìàëèçóåì âåêòîð ëó÷à
+		D3DXVec3Normalize(&normal, &normal);//íîðìàëèçóåì íîðìàëü
 		stMaterial & curMaterial = listMaterials.at(curSphere->MaterialId);
 
 		//èçìåíÿåì íîðìàëü â åñëè ýòî áóìï ïîâåðõíîñòü
@@ -410,7 +402,7 @@ glm::vec4 stScene::addRay(stRay viewRay) {
 		for (std::vector<stLight>::iterator pPointLight = listPointLights.begin(); pPointLight < listPointLights.end(); pPointLight++) {
 			glm::vec3 lightPos = (*pPointLight).position;
 			glm::vec3 lightDirection = lightPos - intPoint; //âû÷èñëÿåì íàïðàâëåíèå ñâåòà â òî÷êå ïåðåñå÷åíèÿ
-			lightDirection = glm::normalize(lightDirection);
+			D3DXVec3Normalize(&lightDirection, &lightDirection);
 			
 			stSphere * curLightSphere = 0;
 			float distance = 2000.0f;
@@ -440,15 +432,13 @@ glm::vec4 stScene::addRay(stRay viewRay) {
 				
 			//add turbulent
 			if (curMaterial.turbulence) {
-				glm::vec3 tmpTurbulenceColor = texture.Turbulence(lambert, coefReflect, intPoint, curMaterial.color, curMaterial.color2, (*pPointLight).intensity);
-				resPixelColor.r += tmpTurbulenceColor.r;
-				resPixelColor.g += tmpTurbulenceColor.g;
-				resPixelColor.b += tmpTurbulenceColor.b;
+				resPixelColor += texture.Turbulence(lambert, coefReflect, intPoint, curMaterial.color, curMaterial.color2, (*pPointLight).intensity);
+				
 			}
 
 			//specular by Phong
 			float phongTerm = 0;
-			glm::vec3 reflectDir = 2.0f * normal * dotLightNormal - lightDirection;
+			glm::vec3 reflectDir = 2 * normal * dotLightNormal - lightDirection;
 			phongTerm = max(glm::dot(viewRay.direction, reflectDir), 0.0f);
 			phongTerm = curMaterial.specVal * powf(phongTerm, curMaterial.specPow) * coefReflect * (*pPointLight).intensity;
 			resPixelColor.r += phongTerm;
@@ -458,7 +448,7 @@ glm::vec4 stScene::addRay(stRay viewRay) {
 
 		//ñ÷èòàåì íîâûé îòðàæ¸ííûé ëó÷ 
 		viewRay.startPoint = intPoint;
-		viewRay.direction = 2.0f * normal * dotViewNormal - viewRay.direction;
+		viewRay.direction = 2 * normal * dotViewNormal - viewRay.direction;
 		coefReflect *= curMaterial.reflectionCoef;
 		level++;
 	} while ((coefReflect > 0.0f) && (level <= 3));
@@ -467,9 +457,9 @@ glm::vec4 stScene::addRay(stRay viewRay) {
 }
 
 //îñíîâíàÿ ôóíêöèÿ ðàñ÷¸òà ñöåíû
-float * stScene::calcPixels(unsigned int screen_width, unsigned int screen_height) {
+void stScene::calcObjects() {
 
-	static float* pixels = new float[screen_width*screen_width*3];
+	unsigned int * bits = (unsigned int *)rect.pBits; // ïîëó÷àåì óêàçàòåëü íà ñûðûå äàííûå áóôåðà
 	
 	static const float autoExposure = AutoExposure();
 
@@ -480,21 +470,21 @@ float * stScene::calcPixels(unsigned int screen_width, unsigned int screen_heigh
 	float fTotalWeight;
 	float projectionDistance = 0.0f;
 	if (persp.typePersp == ScenePersp::conic && persp.FOV > 0.0f &&  persp.FOV < 189.0f) {
-		projectionDistance = 0.5f * screen_width / tanf(0.5f*persp.FOV*M_PI_2);
+		projectionDistance = 0.5f * d3dSurfDesc.Width / tanf(0.5f*persp.FOV*M_PI_2);
 	}
 
 	//ãåíåðèðóåì ïàðàëëåëüíûå çàäàíèÿ
 	//#pragma omp parallel private(x, y)
-	srand(time(0));
+	srand(time());
 
 	//ïðîõîäèì ïî âñåé ïîâåðõíîñòè è ãåíåðèðóåì ëó÷è
-	for (unsigned int  y = 0; y < screen_height; ++y)
-	for (unsigned int  x = 0; x < screen_width; ++x) {
+	for (unsigned int  y = 0; y < d3dSurfDesc.Height; ++y)
+	for (unsigned int  x = 0; x < d3dSurfDesc.Width; ++x) {
 		float R = 0.0f;
 		float G = 0.0f;
 		float B = 0.0f;
 		
-		glm::vec3 dxResColor(0,0,0);
+		glm::vec3 dxResColor(0,0,0,0);
 
 		float fragmenty = (float)y;
 		float fragmentx = (float)x; 
@@ -515,12 +505,12 @@ float * stScene::calcPixels(unsigned int screen_width, unsigned int screen_heigh
 				dxResColor = addRay(viewRay);
 			} else {
 				fTotalWeight = 0.0f;
-				glm::vec3 dir((fragmentx - 0.5f*screen_width)/projectionDistance,(fragmenty - 0.5f*screen_height)/projectionDistance, 1.0f);
+				glm::vec3 dir((fragmentx - 0.5f*d3dSurfDesc.Width)/projectionDistance,(fragmenty - 0.5f*d3dSurfDesc.Height)/projectionDistance, 1.0f);
 				float norm = glm::dot(dir, dir);
 				if (norm == 0.0f)
 					break;
 				dir = dir/sqrt(norm);
-				glm::vec3 start(0.5f*screen_width, 0.5f*screen_height, 0.0f);
+				glm::vec3 start(0.5f*d3dSurfDesc.Width, 0.5f*d3dSurfDesc.Height, 0.0f);
 				glm::vec3 ptAimed = start + persp.clearPoint*dir;
 				int loop_max = 3; if (persp.dispersion == 0.0f) loop_max = 1;
 				for (int i = 0; i < loop_max; ++i) {
@@ -556,8 +546,6 @@ float * stScene::calcPixels(unsigned int screen_width, unsigned int screen_heigh
 			G = srgbEncode(G);
 			B = srgbEncode(B);
 			
-			//bits[y * rect.Pitch / 4 + x]  = D3DCOLOR_XRGB(min(unsigned int (R*255),255), min(unsigned int (G*255),255), min(unsigned int (B*255),255));
+			bits[y * rect.Pitch / 4 + x]  = D3DCOLOR_XRGB(min(unsigned int (R*255),255), min(unsigned int (G*255),255), min(unsigned int (B*255),255));
 	}
-	
-	return pixels;
 }

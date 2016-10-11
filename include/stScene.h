@@ -21,13 +21,12 @@ private:
 	stRay ** rayArray;
 	GLuint screenTexture;
 	glm::vec3 ambientColor;
-	void calcObjects();
 	//LPD3DXFONT font;
 	void drawFPS();
 	//void calcFPS(int oldTime);
 	//glm::vec3 readCubemap(stRay viewRay);
 	//glm::vec3 readTexture(int, float u, float v, const D3DLOCKED_RECT&);
-	glm::vec3 addRay(stRay viewRay);
+	glm::vec4 addRay(stRay viewRay);
 	float FPS;
 	int FrameCnt;
 	unsigned int TimeElapsed;
@@ -39,4 +38,5 @@ public:
 	void UpdateObjects();
 	void DrawObjects();
 	void KeyPress(unsigned int key);
+	float *  calcPixels(unsigned int, unsigned int);
 };
