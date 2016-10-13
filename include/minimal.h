@@ -1,6 +1,5 @@
 #pragma once
 
-#include <gl/GLU.h>
 #include <iostream>
 #include <random>
 #include <string>
@@ -8,12 +7,12 @@
 #include <map>
 #include <algorithm>
 
-extern "C" {
+//extern "C" {
     #include <SDL.h>
     #include <SDL_main.h>
     #include <SDL_opengl.h>
 	#include <SDL_image.h>
-}
+//}
 
 //#pragma comment(lib,"Box2D.lib")
 //#pragma comment(lib,"SDL2.lib")

@@ -5,11 +5,12 @@
 #include <cmath>
 #include "stScene.h"
 
-extern "C"
-{
+//extern "C"
+//{
 	#include <SDL2/SDL.h>
 	#include <SDL2/SDL_opengl.h>
-}
+//}
+
 #include "init.h"
 
 extern SDL_Window		* window;
