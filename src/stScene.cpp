@@ -55,7 +55,7 @@ stScene::stScene(int width, int height)
 	specularEnabled = true;
 	reflectionEnabled = true;
 
-	objConfig = std::unique_ptr<ConfigLoader>(new ConfigLoader("res\\config.txt"));
+	objConfig = std::unique_ptr<ConfigLoader>(new ConfigLoader("/tmp/config.txt"));
 	listPointLights = objConfig->GetLights();
 	listMaterials = objConfig->GetMaterials();
 	listSpheres = objConfig->GetSpheres();
@@ -539,6 +539,8 @@ float * stScene::calcPixels(unsigned int screen_width, unsigned int screen_heigh
 					dxResColor += dxTmpColor;
 				}
 				dxResColor = (1.0f/fTotalWeight) * dxResColor;
+				
+				
 			}
 			//ïîñëå ïðîãîíà ëó÷à ñóììèðóåì åãî åñëè âêëþ÷¸í ñóïåðñýìïëèíã
 			R += dxResColor.r * coefSupersampling; 
@@ -556,7 +558,10 @@ float * stScene::calcPixels(unsigned int screen_width, unsigned int screen_heigh
 			G = srgbEncode(G);
 			B = srgbEncode(B);
 			
-			//bits[y * rect.Pitch / 4 + x]  = D3DCOLOR_XRGB(min(unsigned int (R*255),255), min(unsigned int (G*255),255), min(unsigned int (B*255),255));
+			// write finel results to array
+			pixels[y*screen_width+x+0] = std::min(R, 1.0f);
+			pixels[y*screen_width+x+1] = std::min(G, 1.0f);
+			pixels[y*screen_width+x+2] = std::min(B, 1.0f);
 	}
 	
 	return pixels;

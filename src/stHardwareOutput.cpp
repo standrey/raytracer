@@ -9,7 +9,7 @@ StDrawLogic::StDrawLogic()  {
 void StDrawLogic::InitVideoOutput() {
 
 	m_screenSize.w = 800;
-	m_screenSize.h = 600;
+	m_screenSize.h = 800;
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0){
 		std::cout << "Error: Could not init SDL library! Error: " << SDL_GetError() << std::endl;
@@ -55,7 +55,21 @@ void StDrawLogic::InitVideoOutput() {
 	glOrtho( 0, m_screenSize.w, 0, m_screenSize.h, -1, 1 );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity();
-
+	
+	//init background texture
+	/*
+	SDL_Surface *surface = SDL_LoadBMP("..\\res\\background.bmp");
+	if (surface == nullptr){
+		std::cout << "SDL_LoadBMP Error: " << SDL_GetError() << std::endl;
+		return;
+	}
+	glGenTextures(1,&texture);
+	glBindTexture(GL_TEXTURE_2D,texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w,surface->h, 0, GL_RGB,GL_UNSIGNED_BYTE,surface->pixels);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    SDL_FreeSurface(surface);
+	*/
 }
 /*
 GLuint StDrawLogic::LoadTilesetTexture(const std::string * tileset_path) {

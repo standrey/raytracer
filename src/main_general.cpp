@@ -1,22 +1,18 @@
 #include <iostream>
+#include <fstream>
 #include <cstdio>
 #include <vector>
 #include <list>
 #include <cmath>
-#include "stScene.h"
 
 //extern "C"
 //{
 	#include <SDL2/SDL.h>
 	#include <SDL2/SDL_opengl.h>
 //}
-
+#include "stHardwareOutput.h"
+#include "stScene.h"
 #include "init.h"
-
-extern SDL_Window		* window;
-extern SDL_Renderer		* renderer;
-extern SDL_GLContext	context;
-extern GLuint			texture;
 
 
 bool do_loop = true;
@@ -46,17 +42,18 @@ void EventProcess() {
 
 int main(int argc, char** argv)
 {
-	unsigned int window_width = 1024, window_height = 1024;
+	unsigned int window_width = 800, window_height = 800;
 
 	auto mainscene = std::make_unique<stScene>(window_width, window_height);
+	StDrawLogic drawInterface;
 	//openGL coding
 	while (do_loop) {
 		glClearColor ( 0.0, 1.0, 0.0, 1.0 );
 		glClear( GL_COLOR_BUFFER_BIT);
 		//DRAW
 		auto pixels = mainscene->calcPixels(window_width, window_height);
-		glDrawPixels(window_width,window_height,GL_RGB,GL_FLOAT,pixels);
-		SDL_GL_SwapWindow(window);
+		glDrawPixels(window_width, window_height, GL_RGB,GL_FLOAT, pixels);
+		SDL_GL_SwapWindow(drawInterface.m_window);
 		EventProcess();
 	}
 

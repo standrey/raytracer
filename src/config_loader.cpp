@@ -169,11 +169,24 @@ list<typeMaterial> ConfigLoader::readSection(string sectionName)
 {
 	list<typeParamValue> listOfValues;
 	list<typeMaterial> materials;
+/*
+std::ifstream config;
+//prepare f to throw if failbit gets set
+std::ios_base::iostate exceptionMask = config.exceptions() | std::ios::failbit;
+config.exceptions(exceptionMask);
 
-	ifstream config(configFilename);
-	if (config.bad() || config.fail())
+try {
+  config.open("config.txt");
+}
+catch (std::ios_base::failure& e) {
+  std::cerr << e.what() << '\n';
+}
+
+*/
+	ifstream config(configFilename.c_str(), std::ifstream::in);
+	if (config.fail())
 	{
-		std::cerr<<"Failed to read config file config.txt"<<std::endl;
+		std::cerr<<"Failed to read config file"<<std::endl;
 		return materials;
 	}
 
