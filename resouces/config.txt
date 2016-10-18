@@ -21,7 +21,7 @@ intensity=2.7
 
 [spheres]
 
-sphere1 
+sphere1
 materialid=1
 positionx=240
 positiony=350
@@ -65,7 +65,7 @@ colorg=0.1
 colorb=0.9
 color2r=0.9
 color2g=0.2
-color2b=0.9	
+color2b=0.9
 
 material3
 specularpower=1.0
@@ -78,4 +78,4 @@ colorg=0.2
 colorb=0.1
 color2r=0.0
 color2g=0.2
-color2b=0.9	
+color2b=0.9

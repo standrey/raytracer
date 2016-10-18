@@ -44,7 +44,7 @@ typedef struct {
 		const static float t = 2000;
 		//first of all we must transform ray from world space to sphere space
 		glm::vec3 rayPoint = r.startPoint - position;
-
+		
 		//calc codfficients
 		float A = glm::dot(r.direction, r.direction);
 		float B = 2 * glm::dot(rayPoint, r.direction);

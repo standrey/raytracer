@@ -346,12 +346,12 @@ float stScene::AutoExposure() {
 
 glm::vec4 stScene::addRay(stRay viewRay) {
 	
-	glm::vec4 ambientColor(.2f, .2f, .2f, 1.0); //ðàññåÿíûé ñâåò
+	glm::vec4 ambientColor(.2f, .2f, .2f, 1.0);
 	glm::vec4 resPixelColor(0.0f, 0.0f, 0.0f, 0.0f);
-	const int maxLevelReflection = 2;//óðîâåíü âëîæåííîñò îòðàæåíèÿ ëó÷à
-	int level = maxLevelReflection;//òåêóùèé óðîâåíü âëîæåííîñòè ëó÷à
+	const int maxLevelReflection = 2;
+	int level = maxLevelReflection;
 
-	float coefReflect = 1.0f;//íà÷àëüíûé êîýôôèöèåò îòðàæåíèÿ
+	float coefReflect = 1.0f;
 	
 	//íà÷èíàåì îòðàæàòü ëó÷ íàáëþäåíèÿ îò âñåõ îáúåêòîâ è ñîáèðàòü åãî öâåòà
 	do
@@ -473,7 +473,7 @@ float * stScene::calcPixels(unsigned int screen_width, unsigned int screen_heigh
 	
 	static const float autoExposure = AutoExposure();
 
-	persp.typePersp = 1; // make it conic
+	persp.typePersp = ScenePersp::cubic; // make it conic
 	persp.clearPoint = 800;
 	persp.dispersion = 5.0f;
 	persp.FOV = 45.0f;

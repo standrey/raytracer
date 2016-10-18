@@ -48,14 +48,14 @@ void StDrawLogic::InitVideoOutput() {
 	int imgFlags = IMG_INIT_PNG; 
 	if( !( IMG_Init( imgFlags ) & imgFlags ) )
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError();
-	
+	/*
 	glViewport( 0, 0, m_screenSize.w, m_screenSize.h );
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	glOrtho( 0, m_screenSize.w, 0, m_screenSize.h, -1, 1 );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity();
-	
+	*/
 	//init background texture
 	/*
 	SDL_Surface *surface = SDL_LoadBMP("..\\res\\background.bmp");

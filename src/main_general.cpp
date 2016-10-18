@@ -48,11 +48,9 @@ int main(int argc, char** argv)
 	StDrawLogic drawInterface;
 	//openGL coding
 	while (do_loop) {
-		glClearColor ( 0.0, 1.0, 0.0, 1.0 );
-		glClear( GL_COLOR_BUFFER_BIT);
-		//DRAW
+		//glClear(GL_COLOR_BUFFER_BIT);
 		auto pixels = mainscene->calcPixels(window_width, window_height);
-		glDrawPixels(window_width, window_height, GL_RGB,GL_FLOAT, pixels);
+		glDrawPixels(window_width, window_height, GL_RGB, GL_FLOAT, pixels);
 		SDL_GL_SwapWindow(drawInterface.m_window);
 		EventProcess();
 	}
